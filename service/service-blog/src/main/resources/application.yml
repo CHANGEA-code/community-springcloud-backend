@@ -1,0 +1,47 @@
+server:
+  port: 8110
+
+spring:
+  profiles:
+    active: dev # 环境设置
+  application:
+    name: blog-service
+  datasource: # mysql数据库连接
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/xz_blog?serverTimezone=GMT%2B8
+    username: root
+    password: 1234
+  jackson: #返回json的全局时间格式 修改局部：@JsonFormat(timezone = "GMT+8", pattern = "yyyy-MM-dd")
+    date-format: yyyy-MM-dd HH:mm:ss
+    time-zone: GMT+8
+  redis:
+    database: 0
+    host: localhost
+    port: 6379
+
+#spring:
+  cloud:
+    nacos:
+      discovery:
+        server-addr: localhost:8848 # nacos服务地址
+
+#开启feign对sentinel的支持
+feign:
+  sentinel:
+    enabled: true
+
+#负载均衡策略
+#service-oss: # 调用的提供者的名称
+#  ribbon:
+#    NFLoadBalancerRuleClassName: com.netflix.loadbalancer.RandomRule
+#重试规则
+ribbon:
+  MaxAutoRetries: 1  # 同一实例最大重试次数，不包括首次调用，默认0
+  MaxAutoRetriesNextServer: 1 # 重试其他实例的最大重试次数，不包括首次所选的server，默认1
+  ConnectTimeout: 10000 #连接建立的超时时长，默认1秒
+  ReadTimeout: 10000 #处理请求的超时时间，默认为1秒
+#mybatis日志
+mybatis-plus:
+  configuration:
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+  mapper-locations: classpath:com/chase/springcloud/service/blog/mapper/xml/*.xml

@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.chase.springcloud.service.blog.mapper.PostMapper">
+    <resultMap id="postVO" type="com.chase.springcloud.service.blog.dto.resp.PostRespDto">
+        <id column="id" property="id"/>
+        <result column="title" property="title"/>
+        <result column="content" property="content"/>
+        <result column="comments" property="comments"/>
+        <result column="view" property="view"/>
+        <result column="cover" property="cover"/>
+        <result column="zans" property="zans"/>
+        <result column="tag_id" property="tagId"/>
+        <result column="create_time" property="createTime"/>
+        <result column="update_time" property="updateTime"/>
+    </resultMap>
+<!--    List<Post> recommendPost(@Param("topicId")String topicId,@Param("tagId")String tagId,@Param("pageSize")Integer pageSize);-->
+    <select id="recommendPost" resultMap="postVO">
+        select p.id,p.title,p.content,p.comments,p.view,p.cover,p.zans,p.tag_id,p.create_time,p.update_time
+        from blog_post p
+        where id!=#{topicId} and tag_id=#{tagId} and deleted=0
+        order by view desc
+        limit #{pageSize}
+    </select>
+    <!--boolean addZan(String id);-->
+    <update id="addZan" parameterType="string">
+        update blog_post
+        set zans = zans + 1
+        where id = #{id}
+    </update>
+    <!--int cancelZan(String id);-->
+    <update id="cancelZan" parameterType="string">
+        update blog_post
+        set zans = zans - 1
+        where id = #{id}
+    </update>
+    <!--    int subtractComments(@Param("topicId") String topicId, @Param("count") Integer count);-->
+    <update id="subtractComments">
+        update blog_post
+        set comments = comments - #{count}
+        where id = #{topicId}
+    </update>
+</mapper>

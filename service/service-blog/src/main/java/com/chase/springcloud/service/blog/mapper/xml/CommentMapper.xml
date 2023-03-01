@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.chase.springcloud.service.blog.mapper.CommentMapper">
+    <resultMap id="topicVO" type="com.chase.springcloud.service.blog.dto.resp.CommentRespDto">
+        <id column="id" property="id"/>
+        <result column="content" property="content"/>
+        <result column="user_id" property="userId"/>
+        <result column="topic_id" property="topicId"/>
+        <result column="user_name" property="userName"/>
+        <result column="email_hash" property="emailHash"/>
+        <result column="reply_id" property="replyId"/>
+        <result column="reply_name" property="replyName"/>
+        <result column="create_time" property="createTime"/>
+        <result column="update_time" property="updateTime"/>
+    </resultMap>
+    <!--List<CommentVO> getFirstLayerComments(@Param("topicId") String topicId);-->
+    <select id="getFirstLayerComments" resultMap="topicVO">
+        select c.id,c.content,c.user_id,c.topic_id,b.user_name,b.email_hash,c.reply_id,c.reply_name,c.create_time,c.update_time
+        from blog_comment c
+        inner join blog_user b
+        on c.user_id = b.id
+        where c.topic_id = #{topicId} and c.reply_id = 0
+        order by c.create_time desc
+    </select>
+    <!--List<CommentVO> getCommentsByCommentId(@Param("commentId") String commentId);-->
+    <select id="getCommentsByCommentId" resultMap="topicVO">
+        select c.id,c.content,c.user_id,c.topic_id,b.user_name,b.email_hash,c.reply_id,c.reply_name,c.create_time,c.update_time
+        from blog_comment c
+        inner join blog_user b
+        on c.user_id = b.id
+        where c.reply_id = #{commentId}
+        order by c.create_time desc
+    </select>
+</mapper>
